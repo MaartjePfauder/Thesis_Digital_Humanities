@@ -38,79 +38,11 @@ The following materials should not be uploaded publicly:
 ```text
 *.docx
 original Nexis exports
-articles_final.csv
-articles_for_classification.csv
-articles_for_classification_with_locations_only.csv
-manual_fewshot_examples.csv
-manual_validation_sample.csv
-manual_validation_article_level_disagreements.csv
 ```
 
-These files may contain:
-
+These files contain:
 - full NU.nl article body text
-- article lead text
-- long excerpts from articles
-- classification input text copied from copyrighted articles
-- local file paths to raw source documents
 
-They can be stored locally for private reproducibility, but should not be included in the public GitHub repository.
-
-## Redaction Checklist
-
-Before uploading a CSV publicly, check whether it contains any of the following columns:
-
-```text
-body_text
-lead_text
-classification_text
-raw article text
-full article excerpt
-large copied passage from NU.nl
-```
-
-If the file contains any of these fields, create a redacted version before upload.
-
-Recommended public replacements:
-
-| Private/local file | Public replacement |
-|---|---|
-| `articles_final.csv` | Do not upload, or create a metadata-only version without article text. |
-| `articles_for_classification.csv` | Do not upload, or create a metadata-only version without article text. |
-| `articles_for_classification_with_locations_only.csv` | Do not upload, or create a location-only version without article text. |
-| `manual_validation_sample.csv` | Do not upload, or create a redacted validation sample without `classification_text`. |
-| `manual_validation_article_level_disagreements.csv` | Upload only as `manual_validation_article_level_disagreements_redacted.csv`. |
-| Original Nexis DOCX files | Do not upload. |
-
-## Suggested Redaction Rules
-
-A public CSV version should keep analytical metadata and remove copyrighted text.
-
-Usually safe to keep:
-
-- `article_id`
-- `title`
-- `date`
-- `subjects`
-- `location`
-- `lat`
-- `lon`
-- score columns
-- validation metrics
-- parse diagnostics
-- model settings
-- aggregate counts and shares
-
-Remove before public upload:
-
-- `body_text`
-- `lead_text`
-- `classification_text`
-- original DOCX contents
-- long model explanations that quote or reproduce article text
-- any column containing substantial article passages
-
-Short titles and metadata are retained in this repository as analytical metadata. If stricter reuse conditions apply, remove titles as well and rely on `article_id`.
 
 ## NU.nl and Nexis Material
 
