@@ -49,42 +49,6 @@ The Dutch spaCy model is included in `requirements.txt`. If installation fails, 
 python -m spacy download nl_core_news_lg
 ```
 
-## Repository Structure
-
-The recommended structure is:
-
-```text
-Thesis_Digital_Humanities/
-│
-├── README.md
-├── requirements.txt
-├── .gitignore
-│
-├── thesis/
-│   └── Pfauder-Maartje_S2882507_Thesis-Submission.pdf
-│
-├── notebooks/
-│   ├── news_reader_for_news_values.ipynb
-│   ├── qwen2_news_value_assignment.ipynb
-│   └── qwen2_validation.ipynb
-│
-├── data/
-│   ├── derived/
-│   ├── gis/
-│   ├── validation/
-│   ├── diagnostics/
-│   └── pilot/
-│
-├── qgis/
-│   ├── project/
-│   └── exports/
-│
-└── docs/
-    ├── data_dictionary.md
-    ├── reproducibility_notes.md
-    └── copyright_and_data_availability.md
-```
-
 ## Workflow Overview
 
 The workflow consists of four main stages.
@@ -299,19 +263,6 @@ If you have access to the raw Nexis exports, run:
 3. `qwen2_validation.ipynb`
 
 If you do not have access to the raw article texts, start from the derived CSV files and use the notebooks only to inspect the later analysis logic.
-
-## Files That Should Not Be Publicly Uploaded
-
-Do not upload files containing full NU.nl article text or long excerpts. This includes:
-
-```text
-*.docx
-articles_final.csv
-articles_for_classification.csv
-articles_for_classification_with_locations_only.csv
-manual_fewshot_examples.csv
-manual_validation_sample.csv
-manual_validation_article_level_disagreements.csv
 original Nexis exports
 ```
 
