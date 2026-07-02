@@ -2,8 +2,6 @@
 
 This document describes the main datasets included in the public repository for the thesis **“The geography of news values in Dutch digital journalism: Mapping newsworthiness in NU.nl coverage.”**
 
-The public repository uses cleaned and derived data files. The original NU.nl/Nexis article texts are not redistributed. If local filenames contain suffixes such as `(1)`, `(2)`, or `(3)`, rename them before uploading to GitHub so that the repository uses stable filenames.
-
 ## Scoring System
 
 The six classified news values are:
