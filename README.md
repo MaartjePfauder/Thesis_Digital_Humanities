@@ -94,8 +94,6 @@ Overall, the thesis shows that GIS and LLM-assisted annotation can be combined t
 Thesis_Digital_Humanities/
 │
 ├── README.md
-├── requirements.txt
-├── .gitignore
 │
 ├── thesis/
 │   └── Pfauder-Maartje_S2882507_Thesis-Submission.pdf
@@ -275,22 +273,6 @@ Calibrated pilot classification output.
 
 `data/pilot/pilot_news_value_calibration_summary.csv`  
 Calibration summary for the pilot run.
-
-## Installation
-
-Install the required Python packages with:
-
-```bash
-pip install -r requirements.txt
-```
-
-The notebooks were developed in Google Colab. When running the Qwen2 classification notebook, a GPU runtime is recommended. The full Qwen2 inference step can also be skipped if the saved CSV outputs are reused.
-
-## Reproducibility Notes
-
-The full workflow can be inspected through the notebooks. Complete reproduction of the extraction and classification process requires access to the source/intermediate article files.
-
-Recommended workflow order:
 
 1. Run `notebooks/news_reader_for_news_values.ipynb` to process articles and extract locations.
 2. Run `notebooks/qwen2_news_value_assignment.ipynb` to classify article news values and apply calibration.
