@@ -151,14 +151,17 @@ Thesis_Digital_Humanities/
 │   ├── project/
 │   │   └── thesis_news_values_maps.qgz
 │   └── exports/
-│       ├── heatmap_location_mentions.png
-│       ├── mention_count_by_location.png
-│       ├── dominant_news_value_by_location.png
-│       ├── dominant_news_value_by_municipality.png
-│       ├── present_share_maps/
-│       ├── mean_score_maps/
-│       ├── contrast_maps/
-│       └── overrepresentation_maps/
+│       ├── Figure5.1.png
+│       ├── Figure5.2.png
+│       ├── Figure5.3.png
+│       ├── Figure5.4.png
+│       ├── Figure5.5.png
+│       ├── Figure5.6.png
+│       ├── Figure5.7.png
+│       ├── Figure5.8.png
+│       ├── AttachmentA1.png
+│       ├── AttachmentB1.png
+│       └── AttachmentC1.png
 │
 └── docs/
     ├── data_dictionary.md
