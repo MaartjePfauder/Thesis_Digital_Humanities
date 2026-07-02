@@ -19,7 +19,7 @@ From a corpus of **55,772 NU.nl articles**, the project identifies articles cont
 
 The final GIS-ready dataset contains **19,774 article-location rows** and **880 unique geocoded location points**.
 
-> **Important data note:** some files in this repository contain full or partial NU.nl article text. These files are included for thesis transparency and reproducibility, but they should only be uploaded to a **private repository** unless a redacted public version is created. See [Copyright and Data Availability](docs/copyright_and_data_availability.md).
+> **Important data note:** some files in this repository contain full or partial NU.nl article text. These files are included intentionally for thesis transparency and reproducibility. Some files contain full or partial NU.nl article text. The article texts remain copyrighted by NU.nl and should not be reused, redistributed, or republished outside the context of inspecting and reproducing this thesis workflow.
 
 ## Research Question
 
@@ -129,7 +129,7 @@ Thesis_Digital_Humanities/
 │   │   ├── manual_validation_raw_vs_calibrated_metrics.csv
 │   │   ├── manual_validation_raw_vs_calibrated_comparison.csv
 │   │   ├── manual_validation_confusion_matrices_raw_vs_calibrated.csv
-│   │   └── manual_validation_article_level_disagreements.csv
+│   │   ├── manual_validation_article_level_disagreements.csv
 │   │   ├── manual_fewshot_examples.csv
 │   │   └── manual_validation_sample.csv
 │   │
