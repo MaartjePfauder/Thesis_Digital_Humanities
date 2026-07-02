@@ -144,8 +144,7 @@ Thesis_Digital_Humanities/
 │   │   ├── pilot_news_value_calibration_summary.csv
 │   │   ├── smoke_test_article_news_values_calibrated_to_harcup_oneill.csv
 │   │   └── smoke_test_news_value_calibration_summary.csv
-│   │
-│   └── README_data.md
+│   └── 
 │
 ├── qgis/
 │   ├── project/
@@ -162,11 +161,7 @@ Thesis_Digital_Humanities/
 │       ├── AttachmentA1.png
 │       ├── AttachmentB1.png
 │       └── AttachmentC1.png
-│
-└── docs/
-    ├── data_dictionary.md
-    ├── reproducibility_notes.md
-    └── copyright_and_data_availability.md
+└── 
 ```
 
 ## Files Included
