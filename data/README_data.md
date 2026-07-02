@@ -4,8 +4,6 @@ This folder contains the datasets used for the thesis **“The Geography of News
 
 The data is organized into derived article and classification files, GIS-ready files, validation outputs, diagnostics, and pilot/smoke-test outputs.
 
-> **Important:** some files may contain full or partial NU.nl article text. These files should only be included in a **private repository** unless redacted versions are created. See `../docs/copyright_and_data_availability.md`.
-
 ## Folder Structure
 
 ```text
