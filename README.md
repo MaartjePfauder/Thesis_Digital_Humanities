@@ -187,26 +187,16 @@ Runs the Qwen2 news value classification workflow. Creates raw article-level new
 `notebooks/qwen2_validation.ipynb`  
 Validates calibrated and raw classification outputs against manual coding. Builds validation metrics, comparison tables, disagreement files, and GIS-ready export files.
 
-### Source and Intermediate Data
+### Derived Data
 
-The following files are useful for reproducing the workflow from the article-processing and classification stages. They may contain full or partial article text and should therefore be treated as **restricted/private** data.
-
-`data/source_private/articles_final.csv`  
+`data/derived/articles_final.csv`  
 Structured article table created from the original Nexis exports. This file is used as a main intermediate article-level dataset and may contain full article text.
 
-`data/source_private/articles_for_classification.csv`  
+`data/derived/articles_for_classification.csv`  
 Article-level dataset prepared as input for the news value classification workflow. This file may contain the text fields passed to the model.
 
-`data/source_private/articles_for_classification_with_locations_only.csv`  
+`data/derived/articles_for_classification_with_locations_only.csv`  
 Classification input subset containing only articles with matched Dutch location mentions.
-
-`data/source_private/manual_fewshot_examples.csv`  
-Manually selected few-shot examples used in the prompt design for the LLM-assisted classification step.
-
-`data/source_private/manual_validation_sample.csv`  
-Manual validation sample used to compare human-coded scores with raw and calibrated model scores.
-
-### Derived Data
 
 `data/derived/article_id_mapping.csv`  
 Mapping between stable numeric article IDs and original article/file metadata.
@@ -257,6 +247,12 @@ Confusion matrix data comparing manual labels with raw and calibrated model scor
 `data/validation/manual_validation_article_level_disagreements.csv`  
 Article-level disagreement file for inspecting where the model and manual validation differed. This file may contain article text or classification input text, so it should be checked before being made public.
 
+`data/validation/manual_fewshot_examples.csv`  
+Manually selected few-shot examples used in the prompt design for the LLM-assisted classification step.
+
+`data/validation/manual_validation_sample.csv`  
+Manual validation sample used to compare human-coded scores with raw and calibrated model scores.
+
 ### Diagnostics
 
 `data/diagnostics/diagnostic_duplicate_article_id_rows.csv`  
@@ -297,7 +293,7 @@ The notebooks were developed in Google Colab. When running the Qwen2 classificat
 
 ## Reproducibility Notes
 
-The full workflow can be inspected through the notebooks. Complete reproduction of the extraction and classification process requires access to the source/intermediate article files in `data/source_private/`.
+The full workflow can be inspected through the notebooks. Complete reproduction of the extraction and classification process requires access to the source/intermediate article files.
 
 Recommended workflow order:
 
@@ -305,48 +301,3 @@ Recommended workflow order:
 2. Run `notebooks/qwen2_news_value_assignment.ipynb` to classify article news values and apply calibration.
 3. Run `notebooks/qwen2_validation.ipynb` to validate raw and calibrated scores and prepare GIS-ready files.
 4. Open the QGIS project or import the GIS-ready CSV files into QGIS for spatial analysis.
-
-For more detail, see [Reproducibility Notes](docs/reproducibility_notes.md).
-
-## Data Availability and Copyright
-
-This repository may contain files with full or partial NU.nl article text, especially in:
-
-```text
-data/source_private/
-```
-
-These files are included for transparency and reproducibility, but they should be handled carefully. If this repository is public, replace these files with redacted versions before uploading.
-
-Files that should be treated as restricted/private include:
-
-```text
-data/source_private/articles_final.csv
-data/source_private/articles_for_classification.csv
-data/source_private/articles_for_classification_with_locations_only.csv
-data/source_private/manual_fewshot_examples.csv
-data/source_private/manual_validation_sample.csv
-data/validation/manual_validation_article_level_disagreements.csv
-```
-
-For a public repository, remove columns such as:
-
-```text
-body_text
-lead_text
-classification_text
-raw article text
-long article excerpts
-```
-
-The code and derived outputs are provided to make the workflow transparent and inspectable. The original NU.nl article texts remain copyrighted and are not covered by any license applied to this repository.
-
-For more detail, see [Copyright and Data Availability](docs/copyright_and_data_availability.md).
-
-## Notes
-
-The classification model should be interpreted as an annotation tool, not as an objective measurement instrument. The final analysis uses calibrated model scores because manual validation showed that calibration improved the present/absent classification and reduced average error compared with the raw model output.
-
-Good news should be interpreted with extra caution because it had the weakest validation performance among the six selected news values.
-
-All code and data outputs are provided to make the thesis workflow transparent. For public sharing, use redacted source files or keep the repository private.
