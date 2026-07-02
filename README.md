@@ -4,7 +4,7 @@
 
 ## Overview
 
-This repository contains the code workflow, thesis document, source/intermediate datasets, derived datasets, validation outputs, and GIS-ready files for the master’s thesis **“The Geography of News Values in Dutch Digital Journalism: Mapping Newsworthiness in NU.nl Coverage.”**
+This repository contains the code workflow, thesis document, source/intermediate datasets, derived datasets, validation outputs, and GIS-ready files for the master’s thesis **“The geography of news values in Dutch digital journalism: Mapping newsworthiness in NU.nl coverage.”**
 
 The thesis investigates how news values are geographically distributed in Dutch digital journalism. Using NU.nl articles from 2025, the project combines computational text analysis, location extraction, LLM-assisted classification, benchmark calibration, manual validation, and GIS mapping to study how selected forms of newsworthiness become attached to Dutch places.
 
