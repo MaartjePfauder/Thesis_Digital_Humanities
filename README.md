@@ -4,20 +4,22 @@
 
 ## Overview
 
-This repository contains the code workflow, derived datasets, validation outputs, and GIS-ready files for the master’s thesis **“The Geography of News Values in Dutch Digital Journalism: Mapping Newsworthiness in NU.nl Coverage.”**
+This repository contains the code workflow, thesis document, source/intermediate datasets, derived datasets, validation outputs, and GIS-ready files for the master’s thesis **“The Geography of News Values in Dutch Digital Journalism: Mapping Newsworthiness in NU.nl Coverage.”**
 
 The thesis investigates how news values are geographically distributed in Dutch digital journalism. Using NU.nl articles from 2025, the project combines computational text analysis, location extraction, LLM-assisted classification, benchmark calibration, manual validation, and GIS mapping to study how selected forms of newsworthiness become attached to Dutch places.
 
 From a corpus of **55,772 NU.nl articles**, the project identifies articles containing Dutch location mentions and classifies **12,225 location-linked articles** for six news values:
 
-* entertainment
-* bad news
-* magnitude
-* good news
-* celebrity
-* power elite
+- entertainment
+- bad news
+- magnitude
+- good news
+- celebrity
+- power elite
 
 The final GIS-ready dataset contains **19,774 article-location rows** and **880 unique geocoded location points**.
+
+> **Important data note:** some files in this repository contain full or partial NU.nl article text. These files are included for thesis transparency and reproducibility, but they should only be uploaded to a **private repository** unless a redacted public version is created. See [Copyright and Data Availability](docs/copyright_and_data_availability.md).
 
 ## Research Question
 
@@ -39,11 +41,11 @@ Location-linked articles were classified for six selected news values using the 
 
 Each article was classified on a three-level scale:
 
-| Score | Meaning                    |
-| ----: | -------------------------- |
-|     0 | Not meaningfully present   |
-|    50 | Present, but secondary     |
-|   100 | Strongly present / central |
+| Score | Meaning |
+|---:|---|
+| `0` | Not meaningfully present |
+| `50` | Present, but secondary |
+| `100` | Strongly present / central |
 
 The model was prompted to return structured JSON output containing one score per news value, dominant news values, and a short explanation.
 
@@ -61,13 +63,13 @@ The calibrated article-level news value scores were merged with geocoded article
 
 The GIS workflow was carried out in QGIS and included:
 
-* overall location mention heatmaps
-* mention-count maps by location
-* dominant news value maps by point, municipality, and province
-* present-share maps by municipality
-* mean-score maps by municipality
-* contrast maps
-* overrepresentation maps
+- overall location mention heatmaps
+- mention-count maps by location
+- dominant news value maps by point, municipality, and province
+- present-share maps by municipality
+- mean-score maps by municipality
+- contrast maps
+- overrepresentation maps
 
 Municipality and province aggregations were created using both mention-weighted and location-weighted approaches.
 
@@ -75,18 +77,18 @@ Municipality and province aggregations were created using both mention-weighted 
 
 The results show that NU.nl’s location-linked coverage is spatially uneven. Coverage is concentrated in major urban and institutionally visible places, especially:
 
-* Amsterdam
-* Rotterdam
-* The Hague
-* Utrecht
-* Groningen
-* Eindhoven
+- Amsterdam
+- Rotterdam
+- The Hague
+- Utrecht
+- Groningen
+- Eindhoven
 
 Bad news is the dominant form of spatial visibility across much of the dataset. However, secondary patterns also appear. Entertainment is associated with places connected to sport, culture, and events. Magnitude becomes visible in high-impact locations, while power elite is associated with places connected to government, courts, police, and other institutions. Good news appears more selectively and should be interpreted cautiously because it had weaker validation performance.
 
 Overall, the thesis shows that GIS and LLM-assisted annotation can be combined to analyze not only where news refers to places, but also how those places become newsworthy.
 
-## Recommended Repository Structure
+## Repository Structure
 
 ```text
 Thesis_Digital_Humanities/
@@ -104,7 +106,11 @@ Thesis_Digital_Humanities/
 │   └── qwen2_validation.ipynb
 │
 ├── data/
+│   │
 │   ├── derived/
+│   │   ├── articles_final.csv
+│   │   ├── articles_for_classification.csv
+│   │   ├── articles_for_classification_with_locations_only.csv
 │   │   ├── article_id_mapping.csv
 │   │   ├── article_news_values.csv
 │   │   ├── article_news_values_raw_outputs.csv
@@ -123,7 +129,9 @@ Thesis_Digital_Humanities/
 │   │   ├── manual_validation_raw_vs_calibrated_metrics.csv
 │   │   ├── manual_validation_raw_vs_calibrated_comparison.csv
 │   │   ├── manual_validation_confusion_matrices_raw_vs_calibrated.csv
-│   │   └── manual_validation_article_level_disagreements_redacted.csv
+│   │   └── manual_validation_article_level_disagreements.csv
+│   │   ├── manual_fewshot_examples.csv
+│   │   └── manual_validation_sample.csv
 │   │
 │   ├── diagnostics/
 │   │   ├── diagnostic_duplicate_article_id_rows.csv
@@ -162,151 +170,175 @@ Thesis_Digital_Humanities/
 
 ### Thesis
 
-`thesis/Pfauder-Maartje_S2882507_Thesis-Submission.pdf`
+`thesis/Pfauder-Maartje_S2882507_Thesis-Submission.pdf`  
 Full thesis submission describing the theoretical background, methodology, validation, GIS workflow, results, discussion, limitations, and conclusion.
 
 ### Notebooks
 
-`notebooks/news_reader_for_news_values.ipynb`
+`notebooks/news_reader_for_news_values.ipynb`  
 Converts Nexis-exported NU.nl files into structured article and location tables. Performs article extraction, location matching, geocoding preparation, and diagnostic checks.
 
-`notebooks/qwen2_news_value_assignment.ipynb`
+`notebooks/qwen2_news_value_assignment.ipynb`  
 Runs the Qwen2 news value classification workflow. Creates raw article-level news value scores, parses structured model output, performs smoke and pilot tests, and applies benchmark calibration.
 
-`notebooks/qwen2_validation.ipynb`
+`notebooks/qwen2_validation.ipynb`  
 Validates calibrated and raw classification outputs against manual coding. Builds validation metrics, comparison tables, disagreement files, and GIS-ready export files.
+
+### Source and Intermediate Data
+
+The following files are useful for reproducing the workflow from the article-processing and classification stages. They may contain full or partial article text and should therefore be treated as **restricted/private** data.
+
+`data/source_private/articles_final.csv`  
+Structured article table created from the original Nexis exports. This file is used as a main intermediate article-level dataset and may contain full article text.
+
+`data/source_private/articles_for_classification.csv`  
+Article-level dataset prepared as input for the news value classification workflow. This file may contain the text fields passed to the model.
+
+`data/source_private/articles_for_classification_with_locations_only.csv`  
+Classification input subset containing only articles with matched Dutch location mentions.
+
+`data/source_private/manual_fewshot_examples.csv`  
+Manually selected few-shot examples used in the prompt design for the LLM-assisted classification step.
+
+`data/source_private/manual_validation_sample.csv`  
+Manual validation sample used to compare human-coded scores with raw and calibrated model scores.
 
 ### Derived Data
 
-`data/derived/article_id_mapping.csv`
+`data/derived/article_id_mapping.csv`  
 Mapping between stable numeric article IDs and original article/file metadata.
 
-`data/derived/article_news_values.csv`
+`data/derived/article_news_values.csv`  
 Raw article-level news value classification output.
 
-`data/derived/article_news_values_raw_outputs.csv`
+`data/derived/article_news_values_raw_outputs.csv`  
 Raw model outputs and parsing diagnostics from the classification process.
 
-`data/derived/article_news_values_calibrated_to_harcup_oneill.csv`
+`data/derived/article_news_values_calibrated_to_harcup_oneill.csv`  
 Main calibrated article-level news value dataset used for analysis.
 
-`data/derived/corpus_score_summary_calibrated_and_raw.csv`
+`data/derived/corpus_score_summary_calibrated_and_raw.csv`  
 Corpus-level comparison of raw and calibrated news value score distributions.
 
-`data/derived/news_value_calibration_summary.csv`
+`data/derived/news_value_calibration_summary.csv`  
 Summary of benchmark calibration targets and resulting calibrated prevalence.
 
 ### GIS Data
 
-`data/gis/locations_final.csv`
+`data/gis/locations_final.csv`  
 Geocoded article-location table before final calibration merge.
 
-`data/gis/location_mentions_for_gis.csv`
+`data/gis/location_mentions_for_gis.csv`  
 GIS-ready article-location mention table containing article metadata, location names, and coordinates.
 
-`data/gis/location_mentions_with_calibrated_news_values_for_gis.csv`
+`data/gis/location_mentions_with_calibrated_news_values_for_gis.csv`  
 Main GIS-ready dataset. Each row represents one article-location combination with calibrated news value scores and diagnostic classification information.
 
-`data/gis/location_news_value_summary_by_location_calibrated.csv`
+`data/gis/location_news_value_summary_by_location_calibrated.csv`  
 Location-level summary table with mention counts, mean scores, present shares, strong shares, sum scores, and dominant news value categories.
 
-`data/gis/osm.json`
+`data/gis/osm.json`  
 OpenStreetMap-derived location lookup used for matching Dutch place names to coordinates.
 
 ### Validation Outputs
 
-`data/validation/manual_validation_raw_vs_calibrated_metrics.csv`
+`data/validation/manual_validation_raw_vs_calibrated_metrics.csv`  
 Validation metrics for raw and calibrated model scores.
 
-`data/validation/manual_validation_raw_vs_calibrated_comparison.csv`
+`data/validation/manual_validation_raw_vs_calibrated_comparison.csv`  
 Side-by-side comparison of raw and calibrated model performance by news value.
 
-`data/validation/manual_validation_confusion_matrices_raw_vs_calibrated.csv`
+`data/validation/manual_validation_confusion_matrices_raw_vs_calibrated.csv`  
 Confusion matrix data comparing manual labels with raw and calibrated model scores.
 
-`data/validation/manual_validation_article_level_disagreements_redacted.csv`
-Redacted article-level disagreement file for inspecting where the model and manual validation differed.
+`data/validation/manual_validation_article_level_disagreements.csv`  
+Article-level disagreement file for inspecting where the model and manual validation differed. This file may contain article text or classification input text, so it should be checked before being made public.
 
 ### Diagnostics
 
-`data/diagnostics/diagnostic_duplicate_article_id_rows.csv`
+`data/diagnostics/diagnostic_duplicate_article_id_rows.csv`  
 Diagnostic output for duplicate article IDs.
 
-`data/diagnostics/diagnostic_duplicate_article_location_rows.csv`
+`data/diagnostics/diagnostic_duplicate_article_location_rows.csv`  
 Diagnostic output for duplicate article-location-coordinate rows.
 
-`data/diagnostics/diagnostic_excluded_non_netherlands_location_rows.csv`
+`data/diagnostics/diagnostic_excluded_non_netherlands_location_rows.csv`  
 Rows excluded because their coordinates fell outside the European Netherlands bounding box.
 
 ### Pilot and Smoke Test Outputs
 
-`data/pilot/smoke_test_article_news_values_calibrated_to_harcup_oneill.csv`
+`data/pilot/smoke_test_article_news_values_calibrated_to_harcup_oneill.csv`  
 Small smoke-test output used to check model loading, prompt formatting, parsing, and calibration logic.
 
-`data/pilot/smoke_test_news_value_calibration_summary.csv`
+`data/pilot/smoke_test_news_value_calibration_summary.csv`  
 Calibration summary for the smoke test.
 
-`data/pilot/pilot_article_news_values.csv`
+`data/pilot/pilot_article_news_values.csv`  
 Pilot classification output for 150 articles.
 
-`data/pilot/pilot_article_news_values_calibrated_to_harcup_oneill.csv`
+`data/pilot/pilot_article_news_values_calibrated_to_harcup_oneill.csv`  
 Calibrated pilot classification output.
 
-`data/pilot/pilot_news_value_calibration_summary.csv`
+`data/pilot/pilot_news_value_calibration_summary.csv`  
 Calibration summary for the pilot run.
 
-## Data Availability and Copyright
+## Installation
 
-The full NU.nl article texts are **not redistributed** in this repository because they are copyrighted news texts exported from Nexis.
+Install the required Python packages with:
 
-This repository therefore focuses on:
-
-* derived datasets
-* summary tables
-* validation outputs
-* diagnostic files
-* GIS-ready files
-* code notebooks
-* thesis documentation
-
-Files containing full article text, lead text, long article excerpts, or original Nexis exports should not be uploaded publicly. If article-level text fields are needed for local reproduction, they should be stored outside the public repository.
-
-Recommended files to exclude from the public GitHub repository include:
-
-```text
-articles_final.csv
-articles_for_classification.csv
-articles_for_classification_with_locations_only.csv
-manual_fewshot_examples.csv
-manual_validation_sample.csv
-manual_validation_article_level_disagreements.csv
-original Nexis DOCX files
+```bash
+pip install -r requirements.txt
 ```
 
-If these files are needed for documentation, upload redacted versions that remove `body_text`, `lead_text`, `classification_text`, and any other long copyrighted article excerpts.
+The notebooks were developed in Google Colab. When running the Qwen2 classification notebook, a GPU runtime is recommended. The full Qwen2 inference step can also be skipped if the saved CSV outputs are reused.
 
 ## Reproducibility Notes
 
-The full workflow can be inspected through the notebooks, but complete reproduction requires access to the original Nexis-exported NU.nl article files, which are not included in this public repository.
+The full workflow can be inspected through the notebooks. Complete reproduction of the extraction and classification process requires access to the source/intermediate article files in `data/source_private/`.
 
-The main software and libraries used include:
+Recommended workflow order:
 
-* Python
-* pandas
-* NumPy
-* spaCy
-* `nl_core_news_lg`
-* python-docx
-* PyTorch
-* Hugging Face Transformers
-* Qwen/Qwen2-1.5B-Instruct
-* tqdm
-* Google Colab
-* QGIS
+1. Run `notebooks/news_reader_for_news_values.ipynb` to process articles and extract locations.
+2. Run `notebooks/qwen2_news_value_assignment.ipynb` to classify article news values and apply calibration.
+3. Run `notebooks/qwen2_validation.ipynb` to validate raw and calibrated scores and prepare GIS-ready files.
+4. Open the QGIS project or import the GIS-ready CSV files into QGIS for spatial analysis.
 
-The spatial analysis was carried out in QGIS using WGS 84 for imported point coordinates and Amersfoort / RD New, EPSG:28992, for Dutch spatial analysis and mapping.
+For more detail, see [Reproducibility Notes](docs/reproducibility_notes.md).
 
-Administrative boundary layers for municipalities and provinces were obtained from PDOK/Kadaster Bestuurlijke Gebieden.
+## Data Availability and Copyright
+
+This repository may contain files with full or partial NU.nl article text, especially in:
+
+```text
+data/source_private/
+```
+
+These files are included for transparency and reproducibility, but they should be handled carefully. If this repository is public, replace these files with redacted versions before uploading.
+
+Files that should be treated as restricted/private include:
+
+```text
+data/source_private/articles_final.csv
+data/source_private/articles_for_classification.csv
+data/source_private/articles_for_classification_with_locations_only.csv
+data/source_private/manual_fewshot_examples.csv
+data/source_private/manual_validation_sample.csv
+data/validation/manual_validation_article_level_disagreements.csv
+```
+
+For a public repository, remove columns such as:
+
+```text
+body_text
+lead_text
+classification_text
+raw article text
+long article excerpts
+```
+
+The code and derived outputs are provided to make the workflow transparent and inspectable. The original NU.nl article texts remain copyrighted and are not covered by any license applied to this repository.
+
+For more detail, see [Copyright and Data Availability](docs/copyright_and_data_availability.md).
 
 ## Notes
 
@@ -314,4 +346,4 @@ The classification model should be interpreted as an annotation tool, not as an 
 
 Good news should be interpreted with extra caution because it had the weakest validation performance among the six selected news values.
 
-All code and derived outputs are provided to make the workflow transparent and inspectable, while respecting copyright restrictions on the original NU.nl article texts.
+All code and data outputs are provided to make the thesis workflow transparent. For public sharing, use redacted source files or keep the repository private.
