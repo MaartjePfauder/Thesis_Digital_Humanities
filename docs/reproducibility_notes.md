@@ -1,6 +1,6 @@
 # Reproducibility Notes
 
-This document explains how to inspect and, where possible, reproduce the workflow for the thesis **“The Geography of News Values in Dutch Digital Journalism: Mapping Newsworthiness in NU.nl Coverage.”**
+This document explains how to inspect and, where possible, reproduce the workflow for the thesis **“The geography of news values in Dutch digital journalism: Mapping newsworthiness in NU.nl coverage.”**
 
 ## Important Limitation
 
