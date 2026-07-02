@@ -1,4 +1,4 @@
-# The Geography of News Values in Dutch Digital Journalism
+# The geography of news values in Dutch digital journalism
 
 **Mapping newsworthiness in NU.nl coverage**
 
