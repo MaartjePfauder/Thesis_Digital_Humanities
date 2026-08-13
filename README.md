@@ -2,279 +2,226 @@
 
 **Mapping newsworthiness in NU.nl coverage**
 
+Master’s thesis in Digital Humanities
+University of Groningen
+Maartje Pfauder, 2026
+
 ## Overview
 
-This repository contains the code workflow, thesis document, source/intermediate datasets, derived datasets, validation outputs, and GIS-ready files for the master’s thesis **“The geography of news values in Dutch digital journalism: Mapping newsworthiness in NU.nl coverage.”**
+This repository contains the computational workflow, derived and intermediate datasets, validation outputs, GIS-ready files, QGIS project, and thesis document for the master’s thesis **“The geography of news values in Dutch digital journalism: Mapping newsworthiness in NU.nl coverage.”**
 
-The thesis investigates how news values are geographically distributed in Dutch digital journalism. Using NU.nl articles from 2025, the project combines computational text analysis, location extraction, LLM-assisted classification, benchmark calibration, manual validation, and GIS mapping to study how selected forms of newsworthiness become attached to Dutch places.
+The thesis examines how selected news values are geographically distributed in Dutch digital journalism through a case study of **NU.nl coverage published in 2025**. It combines computational text analysis, location extraction and geocoding, LLM-assisted classification, benchmark prevalence calibration, manual validation, and GIS-based spatial analysis.
 
-From a corpus of **55,772 NU.nl articles**, the project identifies articles containing Dutch location mentions and classifies **12,225 location-linked articles** for six news values:
+The complete source corpus contains **55,772 Dutch-language NU.nl articles** retrieved for the period from 1 January to 31 December 2025. Of these, **12,225 location-linked articles** were classified for six selected news values:
 
-- entertainment
-- bad news
-- magnitude
-- good news
-- celebrity
-- power elite
+* entertainment
+* bad news
+* magnitude
+* good news
+* celebrity
+* power elite
 
-The final GIS-ready dataset contains **19,774 article-location rows** and **880 unique geocoded location points**.
+The final GIS dataset contains **19,774 article-location rows** and **880 unique geocoded location-coordinate points**.
 
-> **Important data note:** some files in this repository contain full or partial NU.nl article text. These files are included intentionally for thesis transparency and reproducibility. Some files contain full or partial NU.nl article text. The article texts remain copyrighted by NU.nl and should not be reused, redistributed, or republished outside the context of inspecting and reproducing this thesis workflow.
+The project asks not only **where** NU.nl refers to Dutch places, but also **through which forms of newsworthiness those places become visible**.
+
+NU.nl is treated as a case study of a major Dutch digital news platform. The thesis does not claim that the results represent Dutch journalism as a whole or every dimension of newsworthiness.
 
 ## Research Question
 
 **How are news values geographically distributed in Dutch digital journalism?**
 
-## Method
+The question is examined through the geographical distribution of six selected news values in NU.nl’s 2025 location-linked coverage.
 
-The project uses a mixed computational and interpretive workflow consisting of four main stages.
+## Analytical Design
+
+The workflow connects two units of analysis.
+
+The **unit of classification is the article**. Each classified article receives a score for each of the six news values.
+
+The **primary spatial unit of analysis is the article-location row**. After classification, the article-level news value scores are linked to every retained Dutch location associated with that article.
+
+This means that the maps represent the **co-occurrence of Dutch locations with articles containing particular forms of newsworthiness**. They should not be interpreted as showing that every news value applies independently or equally to every place mentioned in an article. A secondary or incidental location can inherit a news value that primarily concerns another part of the article.
+
+## Method
 
 ### 1. Article Extraction and Location Matching
 
-NU.nl articles exported from Nexis were converted into structured article tables. Dutch location mentions were extracted from article text using the Dutch spaCy model `nl_core_news_lg`. Candidate locations were matched against an OpenStreetMap-derived lookup file and linked to latitude and longitude coordinates.
+The source material consisted of NU.nl articles exported from Nexis as DOCX files and organised by month.
 
-The output of this stage includes article-level metadata, location mentions, geocoded article-location rows, and diagnostic files for excluded or duplicate rows.
+The extraction workflow converted the articles into structured article-level data containing fields such as:
+
+* article identifiers
+* titles
+* publication dates
+* subject metadata
+* body text
+* lead text
+* text-length indicators
+* detected locations
+* location counts
+
+Dutch locations were identified in article body text using the Dutch spaCy model:
+
+`nl_core_news_lg`
+
+Candidate entities were retained when:
+
+1. spaCy labelled the entity as a geopolitical entity (`GPE`), and
+2. the entity matched a location name in an OpenStreetMap-derived lookup table.
+
+The final location lookup contained **2,435 Dutch location names**.
+
+A preprocessing step was used to reduce false-positive locations caused by football club names containing city names, including expressions such as PSV Eindhoven, Ajax Amsterdam, Feyenoord Rotterdam, FC Groningen, and ADO The Hague.
+
+The location workflow initially produced **19,802 article-location rows**. A geographical bounding box for the European Netherlands was then applied:
+
+* latitude: **50.6–53.7**
+* longitude: **3.2–7.3**
+
+This excluded **28 rows** with coordinates outside the defined scope.
+
+After preprocessing and duplicate checks, the final GIS mention dataset contains:
+
+* **19,774 article-location rows**
+* **12,225 classified articles**
+* **880 unique location-coordinate points**
+
+No duplicate article-location-coordinate rows remained in the final GIS dataset.
 
 ### 2. LLM-Assisted News Value Classification
 
-Location-linked articles were classified for six selected news values using the open-weight instruction model `Qwen/Qwen2-1.5B-Instruct` in Google Colab.
+The 12,225 location-linked articles were classified using the open-weight instruction model:
 
-Each article was classified on a three-level scale:
+`Qwen/Qwen2-1.5B-Instruct`
 
-| Score | Meaning |
-|---:|---|
-| `0` | Not meaningfully present |
-| `50` | Present, but secondary |
-| `100` | Strongly present / central |
+The model was run in Google Colab and used as a structured annotation tool rather than as a generative source of research conclusions.
 
-The model was prompted to return structured JSON output containing one score per news value, dominant news values, and a short explanation.
+Six news values were classified independently:
 
-### 3. Calibration and Validation
+| News value    | Operational focus                                                                                                                                                                  |
+| ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Entertainment | Amusement, culture, media, leisure, sport spectacle, light human interest, animals, humour, or entertainment-oriented framing                                                      |
+| Bad news      | Harm, loss, death, injury, danger, damage, crime, punishment, crisis, failure, threat, or serious negative consequences                                                            |
+| Magnitude     | Scale, large numbers, major financial amounts, broad consequences, national or regional impact, records, or exceptional scale                                                      |
+| Good news     | Success, victory, achievement, recovery, rescue, improvement, celebration, breakthrough, positive return, favourable outcome, or a problem being solved                            |
+| Celebrity     | Famous or widely recognised individuals whose public profile contributes to the story                                                                                              |
+| Power elite   | Powerful actors or institutions such as government, courts, police, ministries, municipalities, regulators, major companies, universities, hospitals, or other major organisations |
 
-Because the raw model output under- or over-detected some categories, a benchmark prevalence calibration step was applied using Harcup and O’Neill’s updated news value taxonomy as a reference point.
+The classification was **multi-label**, meaning that several news values could be present in the same article.
 
-A manual validation sample of 300 articles was coded using the same 0/50/100 scoring scheme. The validation compares raw and calibrated model scores using exact accuracy, mean absolute error, Cohen’s kappa, precision, recall, and F1 score.
+Each news value was assigned one of three scores:
 
-The calibrated scores are used as the main analytical version for GIS mapping.
+| Score | Meaning                                  |
+| ----: | ---------------------------------------- |
+|   `0` | Absent / not meaningfully present        |
+|  `50` | Present but secondary                    |
+| `100` | Central to why the article is newsworthy |
 
-### 4. GIS Preparation and Spatial Analysis
+The values are numerical encodings of three ordinal categories rather than continuous measurements. A score of 50 does not mean that a news value constitutes 50% of an article.
 
-The calibrated article-level news value scores were merged with geocoded article-location rows. This created the main GIS-ready dataset, where each row represents one Dutch location mentioned in one classified article.
+#### Classification input
 
-The GIS workflow was carried out in QGIS and included:
+For each article, the model received a compact prompt containing:
 
-- overall location mention heatmaps
-- mention-count maps by location
-- dominant news value maps by point, municipality, and province
-- present-share maps by municipality
-- mean-score maps by municipality
-- contrast maps
-- overrepresentation maps
+* numeric article ID
+* publication date
+* title
+* subject metadata
+* detected Dutch locations
+* text source
+* article excerpt
 
-Municipality and province aggregations were created using both mention-weighted and location-weighted approaches.
+The excerpt was constructed using the lead and body text:
 
-## Results
+* when the lead was sufficiently informative, it was preferred;
+* when the lead was shorter than 600 characters and body text was available, lead and body text were combined;
+* when the lead was missing or shorter than 80 characters, body text was used;
+* the final classification excerpt was truncated to **750 characters**.
 
-The results show that NU.nl’s location-linked coverage is spatially uneven. Coverage is concentrated in major urban and institutionally visible places, especially:
+This design prioritised prominent and foregrounded forms of newsworthiness and reduced variation in model input length.
 
-- Amsterdam
-- Rotterdam
-- The Hague
-- Utrecht
-- Groningen
-- Eindhoven
+The final prompt contained **four manually coded few-shot examples** demonstrating the intended use of the codebook and the 0/50/100 scoring scheme.
 
-Bad news is the dominant form of spatial visibility across much of the dataset. However, secondary patterns also appear. Entertainment is associated with places connected to sport, culture, and events. Magnitude becomes visible in high-impact locations, while power elite is associated with places connected to government, courts, police, and other institutions. Good news appears more selectively and should be interpreted cautiously because it had weaker validation performance.
+The model returned structured JSON containing:
 
-Overall, the thesis shows that GIS and LLM-assisted annotation can be combined to analyze not only where news refers to places, but also how those places become newsworthy.
+* one score for each news value
+* dominant news value(s)
+* a short classification reason
 
-## Repository Structure
+Invalid JSON or invalid score values triggered a retry.
 
-```text
-Thesis_Digital_Humanities/
-│
-├── README.md
-│
-├── thesis/
-│   └── Pfauder-Maartje_S2882507_Thesis-Submission.pdf
-│
-├── notebooks/
-│   ├── news_reader_for_news_values.ipynb
-│   ├── qwen2_news_value_assignment.ipynb
-│   └── qwen2_validation.ipynb
-│
-├── data/
-│   │
-│   ├── derived/
-│   │   ├── articles_final.csv
-│   │   ├── articles_for_classification.csv
-│   │   ├── articles_for_classification_with_locations_only.csv
-│   │   ├── article_id_mapping.csv
-│   │   ├── article_news_values.csv
-│   │   ├── article_news_values_raw_outputs.csv
-│   │   ├── article_news_values_calibrated_to_harcup_oneill.csv
-│   │   ├── corpus_score_summary_calibrated_and_raw.csv
-│   │   └── news_value_calibration_summary.csv
-│   │
-│   ├── gis/
-│   │   ├── locations_final.csv
-│   │   ├── location_mentions_for_gis.csv
-│   │   ├── location_mentions_with_calibrated_news_values_for_gis.csv
-│   │   ├── location_news_value_summary_by_location_calibrated.csv
-│   │   └── osm.json
-│   │
-│   ├── validation/
-│   │   ├── manual_validation_raw_vs_calibrated_metrics.csv
-│   │   ├── manual_validation_raw_vs_calibrated_comparison.csv
-│   │   ├── manual_validation_confusion_matrices_raw_vs_calibrated.csv
-│   │   ├── manual_validation_article_level_disagreements.csv
-│   │   ├── manual_fewshot_examples.csv
-│   │   └── manual_validation_sample.csv
-│   │
-│   ├── diagnostics/
-│   │   ├── diagnostic_duplicate_article_id_rows.csv
-│   │   ├── diagnostic_duplicate_article_location_rows.csv
-│   │   └── diagnostic_excluded_non_netherlands_location_rows.csv
-│   │
-│   ├── pilot/
-│   │   ├── pilot_article_news_values.csv
-│   │   ├── pilot_article_news_values_calibrated_to_harcup_oneill.csv
-│   │   ├── pilot_news_value_calibration_summary.csv
-│   │   ├── smoke_test_article_news_values_calibrated_to_harcup_oneill.csv
-│   │   └── smoke_test_news_value_calibration_summary.csv
-│   └── 
-│
-├── qgis/
-│   ├── project/
-│   │   └── thesis_news_values_maps.qgz
-│   └── exports/
-│       ├── Figure5.1.png
-│       ├── Figure5.2.png
-│       ├── Figure5.3.png
-│       ├── Figure5.4.png
-│       ├── Figure5.5.png
-│       ├── Figure5.6.png
-│       ├── Figure5.7.png
-│       ├── Figure5.8.png
-│       ├── AttachmentA1.png
-│       ├── AttachmentB1.png
-│       └── AttachmentC1.png
-└── 
-```
+The final classification achieved a **98.8% parse-success rate**. After repeated parsing or validation failures, fallback zero scores were stored so that failed observations remained in the workflow. This affected **147 articles**, corresponding to **186 article-location rows** in the GIS dataset. These cases are technical failures and should not be interpreted as substantive evidence that all six news values were absent.
 
-## Files Included
+### 3. Benchmark Prevalence Calibration
 
-### Thesis
+The raw Qwen2 output showed substantial under- or over-detection for some categories. Entertainment and celebrity were particularly under-detected, while magnitude was over-detected.
 
-`thesis/Pfauder-Maartje_S2882507_Thesis-Submission.pdf`  
-Full thesis submission describing the theoretical background, methodology, validation, GIS workflow, results, discussion, limitations, and conclusion.
+A benchmark prevalence calibration procedure was therefore applied after the raw classifications had been produced.
 
-### Notebooks
+The benchmark was based on the distribution of selected news values reported by **Harcup and O’Neill (2017)** for newspaper page-lead stories.
 
-`notebooks/news_reader_for_news_values.ipynb`  
-Converts Nexis-exported NU.nl files into structured article and location tables. Performs article extraction, location matching, geocoding preparation, and diagnostic checks.
+The target presence shares were:
 
-`notebooks/qwen2_news_value_assignment.ipynb`  
-Runs the Qwen2 news value classification workflow. Creates raw article-level news value scores, parses structured model output, performs smoke and pilot tests, and applies benchmark calibration.
+| News value    | Benchmark share |
+| ------------- | --------------: |
+| Bad news      |           62.2% |
+| Entertainment |           46.7% |
+| Power elite   |           30.4% |
+| Magnitude     |           23.2% |
+| Celebrity     |           20.4% |
+| Good news     |           19.3% |
 
-`notebooks/qwen2_validation.ipynb`  
-Validates calibrated and raw classification outputs against manual coding. Builds validation metrics, comparison tables, disagreement files, and GIS-ready export files.
+Calibration was performed separately for each news value.
 
-### Derived Data
+For article (i) and news value (v), a ranking score was calculated from the original Qwen2 score and the number of predefined calibration keywords found in the article context. The raw Qwen2 score received much greater weight than the keyword count, so the model classification remained the main basis of the ranking.
 
-`data/derived/articles_final.csv`  
-Structured article table created from the original Nexis exports. This file is used as a main intermediate article-level dataset and may contain full article text.
+The highest-ranked articles were selected until the benchmark target for each news value was reached.
 
-`data/derived/articles_for_classification.csv`  
-Article-level dataset prepared as input for the news value classification workflow. This file may contain the text fields passed to the model.
+Articles with a raw score of `50` or `100` retained that score when selected. An article with a raw score of `0` that entered the calibrated target set was assigned `50`. Calibration could therefore introduce a news value as a secondary feature, but could not create a new strongly present (`100`) case.
 
-`data/derived/articles_for_classification_with_locations_only.csv`  
-Classification input subset containing only articles with matched Dutch location mentions.
+Articles falling outside the target set received a calibrated score of `0`.
 
-`data/derived/article_id_mapping.csv`  
-Mapping between stable numeric article IDs and original article/file metadata.
+The raw scores were retained separately so that the spatial effects of calibration could be compared directly with the original model output.
 
-`data/derived/article_news_values.csv`  
-Raw article-level news value classification output.
+### Interpretation of Calibration
 
-`data/derived/article_news_values_raw_outputs.csv`  
-Raw model outputs and parsing diagnostics from the classification process.
+The benchmark is an **external calibration assumption**, not an estimate of the true distribution of news values on NU.nl.
 
-`data/derived/article_news_values_calibrated_to_harcup_oneill.csv`  
-Main calibrated article-level news value dataset used for analysis.
+Harcup and O’Neill’s benchmark concerns newspaper page-lead stories, whereas this thesis examines NU.nl articles from 2025. The calibrated prevalence values should therefore be understood as imposed reference targets used to correct clear imbalances in the raw model output.
 
-`data/derived/corpus_score_summary_calibrated_and_raw.csv`  
-Corpus-level comparison of raw and calibrated news value score distributions.
+The substantive analysis focuses on how raw and calibrated classifications compare in validation and on how the two versions produce different geographical patterns after spatial aggregation.
 
-`data/derived/news_value_calibration_summary.csv`  
-Summary of benchmark calibration targets and resulting calibrated prevalence.
+### 4. Manual Validation
 
-### GIS Data
+A manually coded validation sample of **300 articles** was scored using the same 0/50/100 coding scheme.
 
-`data/gis/locations_final.csv`  
-Geocoded article-location table before final calibration merge.
+Both the raw and calibrated model outputs were compared with the manual annotations.
 
-`data/gis/location_mentions_for_gis.csv`  
-GIS-ready article-location mention table containing article metadata, location names, and coordinates.
+Validation included:
 
-`data/gis/location_mentions_with_calibrated_news_values_for_gis.csv`  
-Main GIS-ready dataset. Each row represents one article-location combination with calibrated news value scores and diagnostic classification information.
+* exact three-level accuracy
+* mean absolute error (MAE)
+* Cohen’s kappa
+* binary precision
+* binary recall
+* binary F1 score
 
-`data/gis/location_news_value_summary_by_location_calibrated.csv`  
-Location-level summary table with mention counts, mean scores, present shares, strong shares, sum scores, and dominant news value categories.
+For the binary metrics, scores of `50` or `100` were treated as present and `0` as absent.
 
-`data/gis/osm.json`  
-OpenStreetMap-derived location lookup used for matching Dutch place names to coordinates.
+Across the six news values, the overall results were:
 
-### Validation Outputs
+| Metric                 |   Raw | Calibrated |
+| ---------------------- | ----: | ---------: |
+| Mean exact accuracy    | 0.757 |  **0.764** |
+| Mean absolute error    |  15.5 |   **13.4** |
+| Mean Cohen’s kappa     | 0.347 |  **0.458** |
+| Mean present/absent F1 | 0.517 |  **0.691** |
 
-`data/validation/manual_validation_raw_vs_calibrated_metrics.csv`  
-Validation metrics for raw and calibrated model scores.
+Calibration therefore slightly improved exact three-level accuracy, reduced average error, and substantially improved binary present/absent classification.
 
-`data/validation/manual_validation_raw_vs_calibrated_comparison.csv`  
-Side-by-side comparison of raw and calibrated model performance by news value.
+Performance differed between categories. In particular:
 
-`data/validation/manual_validation_confusion_matrices_raw_vs_calibrated.csv`  
-Confusion matrix data comparing manual labels with raw and calibrated model scores.
-
-`data/validation/manual_validation_article_level_disagreements.csv`  
-Article-level disagreement file for inspecting where the model and manual validation differed. This file may contain article text or classification input text, so it should be checked before being made public.
-
-`data/validation/manual_fewshot_examples.csv`  
-Manually selected few-shot examples used in the prompt design for the LLM-assisted classification step.
-
-`data/validation/manual_validation_sample.csv`  
-Manual validation sample used to compare human-coded scores with raw and calibrated model scores.
-
-### Diagnostics
-
-`data/diagnostics/diagnostic_duplicate_article_id_rows.csv`  
-Diagnostic output for duplicate article IDs.
-
-`data/diagnostics/diagnostic_duplicate_article_location_rows.csv`  
-Diagnostic output for duplicate article-location-coordinate rows.
-
-`data/diagnostics/diagnostic_excluded_non_netherlands_location_rows.csv`  
-Rows excluded because their coordinates fell outside the European Netherlands bounding box.
-
-### Pilot and Smoke Test Outputs
-
-`data/pilot/smoke_test_article_news_values_calibrated_to_harcup_oneill.csv`  
-Small smoke-test output used to check model loading, prompt formatting, parsing, and calibration logic.
-
-`data/pilot/smoke_test_news_value_calibration_summary.csv`  
-Calibration summary for the smoke test.
-
-`data/pilot/pilot_article_news_values.csv`  
-Pilot classification output for 150 articles.
-
-`data/pilot/pilot_article_news_values_calibrated_to_harcup_oneill.csv`  
-Calibrated pilot classification output.
-
-`data/pilot/pilot_news_value_calibration_summary.csv`  
-Calibration summary for the pilot run.
-
-1. Run `notebooks/news_reader_for_news_values.ipynb` to process articles and extract locations.
-2. Run `notebooks/qwen2_news_value_assignment.ipynb` to classify article news values and apply calibration.
-3. Run `notebooks/qwen2_validation.ipynb` to validate raw and calibrated scores and prepare GIS-ready files.
-4. Open the QGIS project or import the GIS-ready CSV files into QGIS for spatial analysis.
+* entertainment improved strongly after calibration;
+* celebrity improved substantially from severe raw under-detection;
+* magnitude moved closer to the manually observed prevalence
